@@ -126,8 +126,6 @@ h1 {
 
 .state.on .dot { background: var(--ok); }
 
-/* Status pill on top, update warning stacked below it — same width (both
-   stretch to the wider of the two). */
 .titlebar-status { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
 .titlebar-status .state { justify-content: center; }
 
@@ -163,7 +161,6 @@ h2 {
 .head-btn:first-of-type { margin-left: auto; }
 .head-btn + .head-btn { margin-left: 5px; }
 
-/* DRM (EME) status strip - kept about as tall as the device-type selector */
 .drm-progress {
     display: flex;
     height: 9px;
@@ -174,7 +171,7 @@ h2 {
 .drm-step {
     flex: 1;
     min-width: 0;
-    background: transparent;         /* pending = empty track */
+    background: transparent;
     border-left: 1px solid var(--line-2);
     transition: background 0.25s;
     cursor: default;
@@ -195,7 +192,6 @@ h2 {
     text-overflow: ellipsis;
 }
 
-/* Collapsible section */
 .collapse-head { cursor: pointer; user-select: none; }
 .collapse-caret {
     margin-left: auto;
@@ -213,20 +209,15 @@ h2 {
 
 .minilabel.inline { margin: 0; }
 
-/* Two fields side by side */
 .field-split { display: flex; gap: 8px; margin-top: 6px; }
 .field-col { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .field-col .minilabel { margin: 0 0 2px; }
 
-/* Mini toggle rows (packager / quotes) */
 .toggle-row { gap: 8px; }
 .row-label { width: 54px; flex-shrink: 0; }
 .segmented-sm { width: auto; }
 .segmented-sm label { padding: 2px 8px; font-size: 10px; }
 
-/* Settings toggles (Proxy mode / Service cert): fixed-width labels keep the
-   two rows aligned; the segmented controls fill the remaining width. Stack
-   them flush (no gap) so they read as one group, like Command Options. */
 .set-label { width: 72px; flex-shrink: 0; }
 #settings .toggle-row .segmented { flex: 1; }
 #settings .toggle-row + .toggle-row { margin-top: -5px; }
@@ -342,8 +333,6 @@ input:focus-visible { outline: 1px solid var(--border-btn-hover); outline-offset
     color: var(--accent);
 }
 
-/* Disabled option (mutually-exclusive combos). Keep pointer events so the
-   title tooltip still shows on hover. */
 .segmented label.disabled {
     opacity: 0.4;
     color: var(--text-faint);

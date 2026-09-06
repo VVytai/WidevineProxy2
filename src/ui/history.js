@@ -20,7 +20,8 @@ let typeFilter = "all";
 
 function matches(entry) {
     const type = normalizeType((manifests(entry)[0] || {}).type);
-    if (typeFilter !== "all" && type !== typeFilter) return false;
+    if (typeFilter !== "all" && type !== typeFilter)
+        return false;
     return !(query && searchText(entry).indexOf(query) === -1);
 }
 
@@ -71,7 +72,8 @@ searchEl.addEventListener("input", () => {
 // Type filter
 typeFilterEl.addEventListener("click", (e) => {
     const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
+    if (!btn)
+        return;
     typeFilter = btn.dataset.type;
     typeFilterEl.querySelectorAll(".filter-btn").forEach((b) =>
         b.classList.toggle("active", b === btn)
@@ -95,8 +97,10 @@ exportBtn.addEventListener("click", () => {
 
 // Clear all - wipes chrome.storage.local
 clearAllBtn.addEventListener("click", () => {
-    if (!entries.length) return;
-    if (!window.confirm("Delete all " + entries.length + " stored key entries?")) return;
+    if (!entries.length)
+        return;
+    if (!window.confirm("Delete all " + entries.length + " stored key entries?"))
+        return;
     chrome.storage.local.clear(() => { entries = []; render(); });
 });
 
@@ -106,12 +110,27 @@ function onStorageChanged(changes, areaName) {
     else if (areaName === "sync") loadSettings(render);
 }
 
+function isolateZoom() {
+    if (typeof chrome === "undefined" || !chrome.tabs || !chrome.tabs.getCurrent)
+        return;
+    chrome.tabs.getCurrent((tab) => {
+        if (chrome.runtime.lastError || !tab || tab.id == null)
+            return;
+        chrome.tabs.setZoom(tab.id, 0, () => {
+            if (chrome.runtime.lastError)
+                return;
+            chrome.tabs.setZoomSettings(tab.id, { scope: "per-tab" });
+        });
+    });
+}
+
 function boot() {
     if (typeof chrome !== "undefined" && chrome.storage) {
+        isolateZoom();
         chrome.storage.onChanged.addListener(onStorageChanged);
         loadSettings(loadKeys);
     } else {
-        render(); // no extension storage (e.g. plain preview)
+        render();
     }
 }
 

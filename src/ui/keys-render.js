@@ -41,7 +41,7 @@ function sanitizeName(s) {
         .replace(/\s+/g, " ")                     // collapse whitespace
         .replace(/_{2,}/g, "_")                   // collapse underscores
         .replace(/^[\s._]+|[\s._]+$/g, "")        // trim junk from the ends
-        .slice(0, 120)                            // keep it a sane length
+        .slice(0, 120)                                                 // keep it a sane length
         .replace(/[\s._]+$/g, "");                // re-trim after the slice
     if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(name))
         name = "_" + name;
@@ -183,9 +183,6 @@ export function renderKeyEntry(entry, settings, onDelete) {
         head.append(chip);
     }
 
-    // Delete this single entry - only when a handler is provided (the
-    // history page shows it; the popup does not). Span, not <button>, to
-    // avoid nesting a button inside the head button.
     if (typeof onDelete === "function") {
         const del = document.createElement("span");
         del.className = "key-del";
@@ -203,7 +200,6 @@ export function renderKeyEntry(entry, settings, onDelete) {
 
     body.append(kvRow("PSSH", inputVal(entry.pssh_data), entry.pssh_data));
 
-    // Keys are a dropdown; copy grabs the selected kid:key.
     if (lines.length) {
         const keySel = document.createElement("select");
         keySel.className = "kv-select";
@@ -214,14 +210,11 @@ export function renderKeyEntry(entry, settings, onDelete) {
             keySel.append(o);
         });
         keySel.addEventListener("click", (e) => e.stopPropagation());
-        body.append(kvRow("Keys", keySel, () => lines[Number(keySel.value)] || ""));
+        body.append(kvRow("Keys", keySel, () => lines.map((line) => "--key " + line).join(" ")));
     } else {
         body.append(kvRow("Keys", inputVal(""), ""));
     }
 
-    // Only show Manifest + cmd when at least one manifest is known.
-    // The manifest row is a dropdown; picking one updates its URL and the
-    // generated command below.
     const mans = manifests(entry);
     if (mans.length) {
         const sel = document.createElement("select");
@@ -253,14 +246,12 @@ export function renderKeyEntry(entry, settings, onDelete) {
     return item;
 }
 
-// Convert the stored keys map into a newest-first array.
 export function entriesFromMap(map) {
     return Object.values(map || {}).sort(
         (a, b) => (b.timestamp || 0) - (a.timestamp || 0)
     );
 }
 
-// Flatten an entry into a lowercase string for text search.
 export function searchText(entry) {
     entry = entry || {};
     const parts = [entry.url, entry.pssh_data, entry.type];

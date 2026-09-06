@@ -235,10 +235,45 @@ chrome.runtime.onStartup.addListener(() => {
     ensureScriptsRegistered();
 });
 
-chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName !== "sync")
-        return;
-    ensureScriptsRegistered();
+async function setIcon(type) {
+    const p = type === "red" ? "-red" : "";
+    await chrome.action.setIcon({
+        path: {
+            16: `../../images/icon-16${p}.png`,
+            32: `../../images/icon-32${p}.png`,
+            64: `../../images/icon-64${p}.png`,
+            128: `../../images/icon-128${p}.png`,
+        }
+    });
+}
+
+let timeoutId = null;
+
+chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    if (areaName === "local") {
+        const added = Object.values(changes).some(
+            ({ oldValue, newValue }) =>
+                oldValue === undefined && newValue !== undefined
+        );
+
+        if (added) {
+            await setIcon("red");
+
+            if (timeoutId)
+                clearTimeout(timeoutId);
+
+            timeoutId = setTimeout(async () => {
+                timeoutId = null;
+                await setIcon("normal");
+            }, 60 * 1000);
+        }
+    } else if (areaName === "sync") {
+        ensureScriptsRegistered();
+    }
+});
+
+chrome.runtime.onSuspend.addListener(async () => {
+    await setIcon("normal");
 });
 
 setTimeout(() => {
